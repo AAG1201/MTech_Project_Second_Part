@@ -1,0 +1,9 @@
+*.wav
+*.pkl
+*.pth
+*.log
+aagproj/
+__pycache__/
+*.pyc
+.env
+.DS_Store
