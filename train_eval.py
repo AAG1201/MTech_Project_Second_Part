@@ -248,7 +248,7 @@ def evaluate_model(test_audio_dir: str,
 
                     # Setup parameters
                     Ls = len(resampled_data)
-                    win_len = np.floor(Ls / 16)
+                    win_len = np.floor(Ls / 32)
                     win_shift = np.floor(win_len / 4)
                     F_red = 2
 

@@ -8,7 +8,8 @@ from proj_time import proj_time
 from hard_thresholding import hard_thresholding
 from torch.utils.data import Dataset
 from ML_model import ASPADEDataset,ASPADEModel
-from model_new import predict_with_model
+# from model_new import predict_with_model
+from train_eval_new import predict_with_model
 
 
 
@@ -147,15 +148,23 @@ def ml_aspade_eval(data_clipped: np.ndarray,
     # device = next(loaded_model.parameters()).device  # Get model's device
     test_input_tensor = torch.FloatTensor(zEst_init).to(device)  # Move input to same device
 
-    complex_output = loaded_model.complex_representation(test_input_tensor)
-    complex_output = complex_output.detach().cpu().numpy()
+    # complex_output = loaded_model.complex_representation(test_input_tensor)
+    # complex_output = complex_output.detach().cpu().numpy()
 
-    _, k = predict_with_model(loaded_model, zEst_init)
+    # _, k = predict_with_model(loaded_model, zEst_init)
 
 
-    zEst = complex_output.T
-    zEst = zEst.flatten()
+    # zEst = complex_output.T
+    # zEst = zEst.flatten()
+
+    zEst,k = predict_with_model(loaded_model,zEst_init)
+
+   
+    print(zEst)
+
     k = int(0.3*k)
+
+    print(k)
 
     
 

@@ -5,7 +5,7 @@ import multiprocessing
 from typing import List
 from time import time
 import numpy as np
-from training_data_gen import training_data_func
+from training_data_gen_new import training_data_func
 
 def process_batch(batch_params):
     """Process a single batch of data with specific parameters"""

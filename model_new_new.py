@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 
 class ComplexDFTUNet(nn.Module):
-    def __init__(self, dft_size=2000, max_sparsity=1000):
+    def __init__(self, dft_size=1000, max_sparsity=500):
         super(ComplexDFTUNet, self).__init__()
         
         # For 2000-point complex DFT (represented as 4000 real values)
@@ -174,7 +174,7 @@ class FrequencyAttentionGate(nn.Module):
 
 class CustomFrequencyLoss(nn.Module):
     """Custom loss function for DFT reconstruction with frequency-dependent weighting"""
-    def __init__(self, dft_size=2000, alpha=0.7, beta=1.0, gamma=1.3):
+    def __init__(self, dft_size=1000, alpha=0.7, beta=1.0, gamma=1.3):
         super(CustomFrequencyLoss, self).__init__()
         self.dft_size = dft_size
         self.alpha = alpha  # Weight for MSE loss
@@ -229,7 +229,7 @@ class CustomFrequencyLoss(nn.Module):
 
 
 class ComplexDFTDataset(Dataset):
-    def __init__(self, inputs, targets_dft, targets_sparsity, max_sparsity=1000):
+    def __init__(self, inputs, targets_dft, targets_sparsity, max_sparsity=500):
         """
         Args:
             inputs: Input DFT vectors [N, 4000] (real and imaginary parts)
@@ -573,7 +573,7 @@ def save_model(model, path="complex_dft_unet_model.pth"):
 
 
 # Code to load the saved model
-def load_model(model_class, path="complex_dft_unet_model.pth", dft_size=2000, max_sparsity=1000):
+def load_model(model_class, path="complex_dft_unet_model.pth", dft_size=1000, max_sparsity=500):
     """
     Load a saved model
     

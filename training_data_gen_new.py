@@ -20,7 +20,8 @@ def training_data_func(audio_dir: str,
                       target_fs_values: List[int],
                       clipping_thresholds: List[float],
                       time_clip: List[int],
-                      K: int,
+                      win_len: int,
+                      win_shift: int,
                       delta: int
                       ):
     """
@@ -58,8 +59,8 @@ def training_data_func(audio_dir: str,
                     
                     # Setup parameters
                     Ls = len(resampled_data)
-                    win_len = np.floor(Ls/K)
-                    win_shift = np.floor(win_len/4)
+                    # win_len = np.floor(Ls/K)
+                    # win_shift = np.floor(win_len/4)
                     F_red = 2
                     
                     # ASPADE parameters
@@ -73,7 +74,7 @@ def training_data_func(audio_dir: str,
                     
                     # Reconstruction and timing
                     start_time = time()
-                    reconstructed_signal, metrics, intermediate_training_data = spade_segmentation_train(
+                    reconstructed_signal, metrics, intermediate_training_data, _ = spade_segmentation_train(
                         clipped_signal, resampled_data, Ls, win_len, win_shift,
                         ps_maxit, ps_epsilon, ps_r, ps_s, F_red, masks
                     )
@@ -93,7 +94,7 @@ def training_data_func(audio_dir: str,
 
 def process_batch(batch_params):
     """Process a single batch of data with specific parameters"""
-    audio_files, audio_dir, target_fs, clipping_threshold, time_clip, K, delta, batch_id = batch_params
+    audio_files, audio_dir, target_fs, clipping_threshold, time_clip, win_len, win_shift, delta, batch_id = batch_params
     
     print(f"Processing batch {batch_id}: fs={target_fs}, clip={clipping_threshold}, {len(audio_files)} files", flush=True)
     
@@ -118,7 +119,8 @@ def process_batch(batch_params):
             target_fs_values=[target_fs],
             clipping_thresholds=[clipping_threshold],
             time_clip=[time_clip],
-            K=K,
+            win_len=win_len,
+            win_shift=win_shift,
             delta=delta
         )
         
@@ -140,11 +142,12 @@ def main():
     parser.add_argument("--target_fs_values", type=int, nargs='+', required=True, help="List of target sampling frequencies")
     parser.add_argument("--clipping_thresholds", type=float, nargs='+', required=True, help="List of clipping thresholds")
     parser.add_argument("--time_clip", type=int, nargs='+', required=True, help="List of time clipping values")
-    parser.add_argument("--K", type=int, required=True, help="K value")
+    parser.add_argument("--win_len", type=int, required=True, help="Window length")
+    parser.add_argument("--win_shift", type=int, required=True, help="Window Shift")
     parser.add_argument("--delta", type=int, required=True, help="Delta value")
     parser.add_argument("--num_processes", type=int, default=6, help="Number of parallel processes to use")
     parser.add_argument("--num_batches", type=int, default=4, help="Number of batches to split the data into")
-    parser.add_argument("--s_ratio", type=int, default=0.9, help="Split ratio")
+    parser.add_argument("--s_ratio", type=float, default=0.9, help="Split ratio")
     
     args = parser.parse_args()
 
@@ -211,7 +214,8 @@ def main():
                     target_fs, 
                     clipping_threshold, 
                     args.time_clip[0],
-                    args.K,
+                    args.win_len,
+                    args.win_shift,
                     args.delta,
                     batch_id
                 ))
